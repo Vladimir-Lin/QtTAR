@@ -1,0 +1,229 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- lastest modification : 2015-11-02 -->
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Qt TAR编译说明</title>
+    <link href="classic.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div align="center">
+      <h1>Qt TAR编译说明</h1>
+    </div>
+    <hr size="2" width="100%"> <br>
+    网站：<a href="http://qttar.sourceforge.net">http://qttar.sourceforge.net</a><br>
+    源代码：<a href="https://sourceforge.net/projects/qttar/files/">https://sourceforge.net/projects/qttar/files/</a><br>
+    版本：2015-11-04<br>
+    <br>
+    <hr size="2" width="100%">
+    <h3>目录</h3>
+    <ul>
+      <li>Qt TAR目录结构</li>
+      <li>编译QtTAR</li>
+      <li>製作QtTAR文件<br>
+      </li>
+    </ul>
+    <br>
+    <hr size="2" width="100%">
+    <h3>Qt TAR目录结构</h3>
+    <ul>
+      <li> QtTAR</li>
+      <ul>
+        <li>3rdparty</li>
+        <ul>
+          <li>scripts</li>
+          <ul>
+            <li>Update-TAR.js<br>
+            </li>
+          </ul>
+          <li>sources</li>
+          <ul>
+            <li>tar-1.28.tar.gz<br>
+            </li>
+          </ul>
+        </ul>
+        <li>doc</li>
+        <ul>
+          <li>HTML</li>
+          <ul>
+            <li>index.html<br>
+            </li>
+          </ul>
+          <li>ODT</li>
+          <ul>
+            <li>QtTAR.odt</li>
+            <li>QtTAR-TW.odt</li>
+            <li>QtTAR-CN.odt</li>
+          </ul>
+          <li>PDF</li>
+          <ul>
+            <li>QtTAR.pdf</li>
+            <li>QtTAR-TW.pdf</li>
+            <li>QtTAR-CN.pdf</li>
+          </ul>
+          <li>Qt</li>
+          <ul>
+            <li>cn</li>
+            <ul>
+              <li>examples.html</li>
+              <li>index.html</li>
+              <li>lzo.html</li>
+              <li>others.html</li>
+              <li>qtlzo.html</li>
+              <li>Replacements.txt<br>
+              </li>
+            </ul>
+            <li>en</li>
+            <ul>
+              <li>examples.html</li>
+              <li>index.html</li>
+              <li>lzo.html</li>
+              <li>others.html</li>
+              <li>qtlzo.html</li>
+            </ul>
+            <li>tw</li>
+            <ul>
+              <li>examples.html</li>
+              <li>index.html</li>
+              <li>lzo.html</li>
+              <li>others.html</li>
+              <li>qtlzo.html<br>
+              </li>
+            </ul>
+            <li>classic.css</li>
+            <li>index.html</li>
+            <li>Qt.pri</li>
+            <li>QtTAR.qhp<br>
+            </li>
+          </ul>
+          <li>TeX</li>
+          <ul>
+            <li>QtTAR.tex<br>
+            </li>
+          </ul>
+        </ul>
+        <li>examples</li>
+        <ul>
+          <li>tartool</li>
+          <ul>
+            <li>tartool.cpp</li>
+            <li>tartool.ico</li>
+            <li>tartool.pro</li>
+            <li>tartool.rc<br>
+            </li>
+          </ul>
+          <li>examples.pro<br>
+          </li>
+        </ul>
+        <li>include</li>
+        <ul>
+          <li>QtTAR</li>
+          <ul>
+            <li>headers.pri</li>
+            <li>QtTAR</li>
+            <li>qttar.hpp<br>
+            </li>
+          </ul>
+        </ul>
+        <li>src</li>
+        <ul>
+          <li>Embedded</li>
+          <ul>
+            <li>TAR</li>
+            <ul>
+              <li>TAR.pri</li>
+              <li>qttar.cpp</li>
+              <li>qttar.hpp<br>
+              </li>
+            </ul>
+          </ul>
+          <li>QtTAR</li>
+          <ul>
+            <li>qttar.cpp</li>
+            <li>QtTAR.pro<br>
+            </li>
+          </ul>
+          <li>src.pro<br>
+          </li>
+        </ul>
+        <li>tests</li>
+        <ul>
+          <li>auto</li>
+          <ul>
+            <li>cmake</li>
+            <ul>
+              <li>cmake.pro</li>
+              <li>CMakeLists<br>
+              </li>
+            </ul>
+            <li>auto.pro<br>
+            </li>
+          </ul>
+          <li>tests.pro<br>
+          </li>
+        </ul>
+      </ul>
+    </ul>
+    <hr size="2" width="100%">
+    <h3>编译QtTAR</h3>
+    您需要使用Qt的源代码来编译QtTAR模块，QtTAR模块的摆设位置如下：<br>
+    <ul>
+      <li>QtTargetDirectory</li>
+      <li>QtSourceDirectory</li>
+      <ul>
+        <li>QtTAR</li>
+        <li>qtbase</li>
+        <li>gnuwin32<br>
+        </li>
+        <li>...<br>
+        </li>
+      </ul>
+    </ul>
+    编译Qt一般使用源代码与目标目录分开的方式，QtTargetDirectory是Qt编译完成后的最终目
+    录，QtSourceDirectory是Qt的源代码目录。<br>
+    <br>
+    当您编译完成Qt以后，不要进行任何清除的动作，将QtTAR解压缩以后，摆到QtSourceDirectory目录当中，并且更名为
+    QtTAR。<br>
+    <br>
+    <h4>Unix</h4>
+    cd QtTAR<br>
+    qmake<br>
+    make<br>
+    make install<br>
+    <h4>Windows</h4>
+    cd QtTAR<br>
+    qmake<br>
+    nmake<br>
+    nmake install<br>
+    <br>
+    或是<br>
+    <br>
+    cd QtTAR<br>
+    qmake<br>
+    jom<br>
+    nmake install<br>
+    <br>
+    如此即可完成。<br>
+    <br>
+    <hr size="2" width="100%">
+    <h4>製作QtTAR文件</h4>
+    切换到「QtTAR\doc\Qt」目录当中：<br>
+    <br>
+    <b><i>cd QtTAR\doc\Qt</i></b><b><br>
+    </b><b><i>qhelpgenerator.exe QtTAR.qhp -o QtTAR.qch</i></b><br>
+    <br>
+    <h4>新增文件到Qt Creator</h4>
+    <br>
+    打开Qt Creator，「工具」→「选项」→「说明」→「文件」→「新增」，选取QtTAR.qch，按下完成即可新增。<br>
+    <br>
+    <h4>新增文件到Qt Assistant</h4>
+    <br>
+    打开Qt Assistant，「编辑」→「喜好设定」→「文件」→「新增」，选取QtTAR.qch，按下完成即可新增。<br>
+    <br>
+    <hr size="2" width="100%">
+    <div align="center"><font color="#cc9933"><i><b>Neutrino
+            International Inc. 2001~2015</b></i></font><br>
+    </div>
+    <br>
+  </body>
+</html>
