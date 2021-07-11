@@ -66,6 +66,7 @@ bool QtTarBall::Write ( QIODevice & IO , QByteArray & data )                 {
 }
 //////////////////////////////////////////////////////////////////////////////
 bool QtTarBall::WriteClose ( QIODevice & IO )                                {
+  Q_UNUSED(IO)                                                               ;
   return true                                                                ;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -157,6 +158,8 @@ bool QtTarBall::ExtractFile ( QDir        root                               ,
 bool QtTarBall::ExtractDir ( QDir        root                                ,
                              QIODevice & IO                                  ,
                              void      * hiddenFileInfo                    ) {
+  ////////////////////////////////////////////////////////////////////////////
+  Q_UNUSED(IO)                                                               ;
   ////////////////////////////////////////////////////////////////////////////
   HiddenFileInfo * hfi  = (HiddenFileInfo *) hiddenFileInfo                  ;
   QString          path = root . absoluteFilePath ( hfi -> Filename )        ;
@@ -415,6 +418,9 @@ bool QtTarBall::Extract ( QDir root , QIODevice & IO )                       {
 }
 //////////////////////////////////////////////////////////////////////////////
 QFileInfoList QtTarBall::Listing ( QDir & root , QDir source               ) {
+  ////////////////////////////////////////////////////////////////////////////
+  Q_UNUSED(root)                                                             ;
+  ////////////////////////////////////////////////////////////////////////////
   return source . entryInfoList  ( QDir::NoDotAndDotDot | QDir::AllEntries ) ;
 }
 //////////////////////////////////////////////////////////////////////////////
