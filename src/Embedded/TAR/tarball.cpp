@@ -21,76 +21,72 @@
  * Please keep QtTAR as simple as possible.
  *
  ****************************************************************************/
-
-#include <qttar.h>
-
+//////////////////////////////////////////////////////////////////////////////
+#include "qttar.h"
+//////////////////////////////////////////////////////////////////////////////
 #if defined(Q_OS_WIN)
 #include <windows.h>
 #endif
-
+//////////////////////////////////////////////////////////////////////////////
 QT_BEGIN_NAMESPACE
-
+//////////////////////////////////////////////////////////////////////////////
 #ifdef Q_OS_WIN
-extern Q_CORE_EXPORT int qt_ntfs_permission_lookup ;
+extern Q_CORE_EXPORT int qt_ntfs_permission_lookup                           ;
 #endif
-
-QtTarBall:: QtTarBall (void)
-          : QtTAR     (    )
+//////////////////////////////////////////////////////////////////////////////
+QtTarBall:: QtTarBall ( void )
+          : QtTAR     (      )
 {
 }
-
-QtTarBall::~QtTarBall (void)
-{
+//////////////////////////////////////////////////////////////////////////////
+QtTarBall::~QtTarBall ( void )                                               {
 }
-
-bool QtTarBall::Interval(void)
-{
-  return true ;
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::Interval ( void )                                            {
+  return true                                                                ;
 }
-
-void QtTarBall::Report(void * hiddenFileInfo)
-{
+//////////////////////////////////////////////////////////////////////////////
+void QtTarBall::Report ( void * hiddenFileInfo )                             {
+  Q_UNUSED(hiddenFileInfo)                                                   ;
 }
-
-void * QtTarBall::NewHiddenFile(void)
-{
-  HiddenFileInfo * hfi = new HiddenFileInfo ( ) ;
-  return (void *)  hfi                          ;
+//////////////////////////////////////////////////////////////////////////////
+void * QtTarBall::NewHiddenFile             ( void )                         {
+  HiddenFileInfo * hfi = new HiddenFileInfo (      )                         ;
+  return (void *)  hfi                                                       ;
 }
-
-void QtTarBall::CleanHiddenFile(void * hiddenFileInfo)
-{
-  HiddenFileInfo * hfi = (HiddenFileInfo *) hiddenFileInfo ;
-  delete hfi                                               ;
+//////////////////////////////////////////////////////////////////////////////
+void QtTarBall::CleanHiddenFile ( void * hiddenFileInfo )                    {
+  HiddenFileInfo * hfi = (HiddenFileInfo *) hiddenFileInfo                   ;
+  delete hfi                                                                 ;
 }
-
-bool QtTarBall::Write(QIODevice & IO,QByteArray & data)
-{
-  qint64 w = IO . write ( data )  ;
-  return ( data . size ( ) == w ) ;
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::Write ( QIODevice & IO , QByteArray & data )                 {
+  qint64 w = IO . write ( data )                                             ;
+  return ( data . size ( ) == w )                                            ;
 }
-
-bool QtTarBall::WriteClose(QIODevice & IO)
-{
-  return true ;
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::WriteClose ( QIODevice & IO )                                {
+  return true                                                                ;
 }
-
-bool QtTarBall::Read(QIODevice & IO,QByteArray & data,qint64 s)
-{
-  data = IO . read ( s )          ;
-  return ( data . size ( ) == s ) ;
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::Read ( QIODevice & IO , QByteArray & data , qint64 s       ) {
+  data = IO . read   ( s                                                   ) ;
+  return             ( data . size ( ) == s                                ) ;
 }
-
-bool QtTarBall::Skip(QIODevice & IO,qint64 s)
-{
-  return IO . seek ( IO . pos ( ) + s ) ;
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::Skip ( QIODevice & IO , qint64 s                           ) {
+  return IO . seek   ( IO . pos ( ) + s                                    ) ;
 }
-
-bool QtTarBall::ListFile(QDir root,QIODevice & IO,void * hiddenFileInfo)
-{
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::ListFile ( QDir        root                                  ,
+                           QIODevice & IO                                    ,
+                           void      * hiddenFileInfo                      ) {
+  ////////////////////////////////////////////////////////////////////////////
   HiddenFileInfo * hfi = (HiddenFileInfo *) hiddenFileInfo                   ;
   qint64           fs                                                        ;
+  ////////////////////////////////////////////////////////////////////////////
   Report ( hiddenFileInfo )                                                  ;
+  ////////////////////////////////////////////////////////////////////////////
   switch ( hfi -> Type )                                                     {
     case Regular                                                             :
       fs = FileBlocks ( hfi -> size       )                                  ;
@@ -115,11 +111,14 @@ bool QtTarBall::ListFile(QDir root,QIODevice & IO,void * hiddenFileInfo)
     default                                                                  :
     return false                                                             ;
   }                                                                          ;
+  ////////////////////////////////////////////////////////////////////////////
   return true                                                                ;
 }
-
-bool QtTarBall::ExtractFile(QDir root,QIODevice & IO,void * hiddenFileInfo)
-{
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::ExtractFile ( QDir        root                               ,
+                              QIODevice & IO                                 ,
+                              void      * hiddenFileInfo                   ) {
+  ////////////////////////////////////////////////////////////////////////////
   HiddenFileInfo * hfi  = (HiddenFileInfo *) hiddenFileInfo                  ;
   QString          path = root . absoluteFilePath ( hfi -> Filename )        ;
   QFileInfo        finf ( path )                                             ;
@@ -152,50 +151,80 @@ bool QtTarBall::ExtractFile(QDir root,QIODevice & IO,void * hiddenFileInfo)
   } while ( bs == B . size ( ) )                                             ;
   F . close ( )                                                              ;
   ////////////////////////////////////////////////////////////////////////////
-
+  return true                                                                ;
+}
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::ExtractDir ( QDir        root                                ,
+                             QIODevice & IO                                  ,
+                             void      * hiddenFileInfo                    ) {
+  ////////////////////////////////////////////////////////////////////////////
+  HiddenFileInfo * hfi  = (HiddenFileInfo *) hiddenFileInfo                  ;
+  QString          path = root . absoluteFilePath ( hfi -> Filename )        ;
+  root . mkpath        ( path )                                              ;
+  ////////////////////////////////////////////////////////////////////////////
+  QFileInfo        DER ( path )                                              ;
+  return DER . exists  (      )                                              ;
+}
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::ExtractLink ( QDir        root                               ,
+                              QIODevice & IO                                 ,
+                              void      * hiddenFileInfo                   ) {
+  ////////////////////////////////////////////////////////////////////////////
+  Q_UNUSED(root)                                                             ;
+  Q_UNUSED(IO)                                                               ;
+  Q_UNUSED(hiddenFileInfo)                                                   ;
+  ////////////////////////////////////////////////////////////////////////////
+  #ifdef Q_OS_WIN
+  #else
+  #endif
+  return true                                                                ;
+}
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::ExtractDEVs ( QDir        root                               ,
+                              QIODevice & IO                                 ,
+                              void      * hiddenFileInfo                   ) {
+  ////////////////////////////////////////////////////////////////////////////
+  Q_UNUSED(root)                                                             ;
+  Q_UNUSED(IO)                                                               ;
+  Q_UNUSED(hiddenFileInfo)                                                   ;
+  ////////////////////////////////////////////////////////////////////////////
+  #ifdef Q_OS_WIN
+  #else
+  #endif
+  return true ;
+}
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::ExtractNext ( QDir        root                               ,
+                              QIODevice & IO                                 ,
+                              void      * hiddenFileInfo                   ) {
+  ////////////////////////////////////////////////////////////////////////////
+  Q_UNUSED(root)                                                             ;
+  Q_UNUSED(IO)                                                               ;
+  Q_UNUSED(hiddenFileInfo)                                                   ;
   ////////////////////////////////////////////////////////////////////////////
   return true                                                                ;
 }
-
-bool QtTarBall::ExtractDir(QDir root,QIODevice & IO,void * hiddenFileInfo)
-{
-  HiddenFileInfo * hfi  = (HiddenFileInfo *) hiddenFileInfo           ;
-  QString          path = root . absoluteFilePath ( hfi -> Filename ) ;
-  root . mkpath ( path )                                              ;
-  QFileInfo        DER ( path )                                       ;
-  return DER . exists  (      )                                       ;
-}
-
-bool QtTarBall::ExtractLink(QDir root,QIODevice & IO,void * hiddenFileInfo)
-{
-  #ifdef Q_OS_WIN
-  #else
-  #endif
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::ExtractEXT ( QDir        root                                ,
+                             QIODevice & IO                                  ,
+                             void      * hiddenFileInfo                    ) {
+  ////////////////////////////////////////////////////////////////////////////
+  Q_UNUSED(root)                                                             ;
+  Q_UNUSED(IO)                                                               ;
+  Q_UNUSED(hiddenFileInfo)                                                   ;
+  ////////////////////////////////////////////////////////////////////////////
   return true ;
 }
-
-bool QtTarBall::ExtractDEVs(QDir root,QIODevice & IO,void * hiddenFileInfo)
-{
-  #ifdef Q_OS_WIN
-  #else
-  #endif
-  return true ;
-}
-
-bool QtTarBall::ExtractNext(QDir root,QIODevice & IO,void * hiddenFileInfo)
-{
-  return true ;
-}
-
-bool QtTarBall::ExtractEXT(QDir root,QIODevice & IO,void * hiddenFileInfo)
-{
-  return true ;
-}
-
-bool QtTarBall::setFileTime(QDir root,QIODevice & IO,void * hiddenFileInfo)
-{
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::setFileTime ( QDir        root                               ,
+                              QIODevice & IO                                 ,
+                              void      * hiddenFileInfo                   ) {
+  ////////////////////////////////////////////////////////////////////////////
+  Q_UNUSED(IO)                                                               ;
+  ////////////////////////////////////////////////////////////////////////////
   HiddenFileInfo * hfi  = (HiddenFileInfo *) hiddenFileInfo                  ;
   QString          path = root . absoluteFilePath ( hfi -> Filename )        ;
+  ////////////////////////////////////////////////////////////////////////////
   #if defined(Q_OS_WIN)
   HANDLE     hFile                                                           ;
   SYSTEMTIME SCT                                                             ;
@@ -242,16 +271,25 @@ bool QtTarBall::setFileTime(QDir root,QIODevice & IO,void * hiddenFileInfo)
   #endif
   return true                                                                ;
 }
-
-bool QtTarBall::setFileMode(QDir root,QIODevice & IO,void * hiddenFileInfo)
-{
-  return true ;
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::setFileMode ( QDir        root                               ,
+                              QIODevice & IO                                 ,
+                              void      * hiddenFileInfo                   ) {
+  ////////////////////////////////////////////////////////////////////////////
+  Q_UNUSED(root)                                                             ;
+  Q_UNUSED(IO)                                                               ;
+  Q_UNUSED(hiddenFileInfo)                                                   ;
+  ////////////////////////////////////////////////////////////////////////////
+  return true                                                                ;
 }
-
-bool QtTarBall::Extract(QDir root,QIODevice & IO,void * hiddenFileInfo)
-{
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::Extract ( QDir        root                                   ,
+                          QIODevice & IO                                     ,
+                          void      * hiddenFileInfo                       ) {
+  ////////////////////////////////////////////////////////////////////////////
   HiddenFileInfo * hfi = (HiddenFileInfo *) hiddenFileInfo                   ;
   Report ( hiddenFileInfo )                                                  ;
+  ////////////////////////////////////////////////////////////////////////////
   switch ( hfi -> Type )                                                     {
     case Regular                                                             :
       if ( ! ExtractFile ( root , IO , hiddenFileInfo ) ) return false       ;
@@ -290,106 +328,110 @@ bool QtTarBall::Extract(QDir root,QIODevice & IO,void * hiddenFileInfo)
     default                                                                  :
     return false                                                             ;
   }                                                                          ;
+  ////////////////////////////////////////////////////////////////////////////
   return true                                                                ;
 }
-
-bool QtTarBall::List(QDir root,QString filename)
-{
-  QFile F ( filename )                               ;
-  bool  f = false                                    ;
-  if ( ! F . open ( QIODevice::ReadOnly ) ) return f ;
-  f = List ( root , F )                              ;
-  F . close ( )                                      ;
-  return f                                           ;
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::List ( QDir root , QString filename )                        {
+  QFile F ( filename )                                                       ;
+  bool  f = false                                                            ;
+  if ( ! F . open ( QIODevice::ReadOnly ) ) return f                         ;
+  f = List ( root , F )                                                      ;
+  F . close ( )                                                              ;
+  return f                                                                   ;
 }
-
-bool QtTarBall::List(QDir root,QIODevice & IO)
-{
-  bool       f    = true                           ;
-  int        bs   = BlockSize ( )                  ;
-  bool       drop = false                          ;
-  qint64     pos  = 0                              ;
-  QByteArray B                                     ;
-  while ( ! drop )                                 {
-    if ( Read ( IO , B , bs ) )                    {
-      pos += bs                                    ;
-      if ( isBlock ( B ) )                         {
-        HiddenFileInfo * HFI                       ;
-        HFI = (HiddenFileInfo *) NewHiddenFile ( ) ;
-        if ( QtTAR::Extract ( B , HFI ) )          {
-          drop = ! ListFile ( root , IO , HFI )    ;
-        } else drop = true                         ;
-        CleanHiddenFile ( HFI )                    ;
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::List ( QDir root , QIODevice & IO )                          {
+  bool       f    = true                                                     ;
+  int        bs   = BlockSize ( )                                            ;
+  bool       drop = false                                                    ;
+  qint64     pos  = 0                                                        ;
+  QByteArray B                                                               ;
+  while ( ! drop )                                                           {
+    if ( Read ( IO , B , bs ) )                                              {
+      pos += bs                                                              ;
+      if ( isBlock ( B ) )                                                   {
+        HiddenFileInfo * HFI                                                 ;
+        HFI = (HiddenFileInfo *) NewHiddenFile ( )                           ;
+        if ( QtTAR::Extract ( B , HFI ) )                                    {
+          drop = ! ListFile ( root , IO , HFI )                              ;
+        } else drop = true                                                   ;
+        CleanHiddenFile ( HFI )                                              ;
       } else
-      if ( ! isPadding ( B ) ) drop = true         ;
-    } else drop = true                             ;
-    if ( ! drop ) drop = ! Interval ( )            ;
-  }                                                ;
-  return f                                         ;
+      if ( ! isPadding ( B ) ) drop = true                                   ;
+    } else drop = true                                                       ;
+    if ( ! drop ) drop = ! Interval ( )                                      ;
+  }                                                                          ;
+  return f                                                                   ;
 }
-
-bool QtTarBall::Extract(QDir root,QString filename)
-{
-  QFile F ( filename )                               ;
-  bool  f = false                                    ;
-  if ( ! F . open ( QIODevice::ReadOnly ) ) return f ;
-  f = Extract ( root , F )                           ;
-  F . close ( )                                      ;
-  return f                                           ;
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::Extract ( QDir root , QString filename )                     {
+  ////////////////////////////////////////////////////////////////////////////
+  QFile F ( filename )                                                       ;
+  bool  f = false                                                            ;
+  ////////////////////////////////////////////////////////////////////////////
+  if ( ! F . open ( QIODevice::ReadOnly ) ) return f                         ;
+  f = Extract ( root , F )                                                   ;
+  F . close ( )                                                              ;
+  ////////////////////////////////////////////////////////////////////////////
+  return f                                                                   ;
 }
-
-bool QtTarBall::Extract(QDir root,QIODevice & IO)
-{
-  bool       f    = true                           ;
-  int        bs   = BlockSize ( )                  ;
-  bool       drop = false                          ;
-  qint64     pos  = 0                              ;
-  QByteArray B                                     ;
-  QList<HiddenFileInfo *> HFIs                     ;
-  while ( ! drop )                                 {
-    if ( Read ( IO , B , bs ) )                    {
-      pos += bs                                    ;
-      if ( isBlock ( B ) )                         {
-        HiddenFileInfo * HFI                       ;
-        HFI = (HiddenFileInfo *) NewHiddenFile ( ) ;
-        if ( QtTAR::Extract ( B , HFI ) )          {
-          drop = ! Extract ( root , IO , HFI )     ;
-        } else drop = true                         ;
-        if ( Directory == HFI -> Type )            {
-          HFIs << HFI                              ;
-        } else CleanHiddenFile ( HFI )             ;
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::Extract ( QDir root , QIODevice & IO )                       {
+  ////////////////////////////////////////////////////////////////////////////
+  bool       f    = true                                                     ;
+  int        bs   = BlockSize ( )                                            ;
+  bool       drop = false                                                    ;
+  qint64     pos  = 0                                                        ;
+  QByteArray B                                                               ;
+  QList<HiddenFileInfo *> HFIs                                               ;
+  ////////////////////////////////////////////////////////////////////////////
+  while  ( ! drop                                                          ) {
+    if   ( Read ( IO , B , bs )                                            ) {
+      pos += bs                                                              ;
+      if ( isBlock ( B )                                                   ) {
+        HiddenFileInfo * HFI                                                 ;
+        HFI = (HiddenFileInfo *) NewHiddenFile ( )                           ;
+        if ( QtTAR::Extract ( B , HFI ) )                                    {
+          drop = ! Extract ( root , IO , HFI )                               ;
+        } else drop = true                                                   ;
+        if ( Directory == HFI -> Type )                                      {
+          HFIs << HFI                                                        ;
+        } else CleanHiddenFile ( HFI )                                       ;
       } else
-      if ( ! isPadding ( B ) ) drop = true         ;
-    } else drop = true                             ;
-    if ( ! drop ) drop = ! Interval ( )            ;
-  }                                                ;
-  //////////////////////////////////////////////////
-  if ( HFIs . count ( ) > 0 )                      {
-    for (int i = 0 ; i < HFIs . count ( ) ; i++ )  {
-      setFileTime     ( root , IO , HFIs [ i ]   ) ;
-      CleanHiddenFile (             HFIs [ i ]   ) ;
-    }                                              ;
-  }                                                ;
-  //////////////////////////////////////////////////
-  return f                                         ;
+      if ( ! isPadding ( B ) ) drop = true                                   ;
+    } else drop = true                                                       ;
+    if ( ! drop ) drop = ! Interval ( )                                      ;
+  }                                                                          ;
+  ////////////////////////////////////////////////////////////////////////////
+  if                  ( HFIs . count ( ) > 0                               ) {
+    for               ( int i = 0 ; i < HFIs . count ( ) ; i++             ) {
+      setFileTime     ( root , IO , HFIs [ i ]                             ) ;
+      CleanHiddenFile (             HFIs [ i ]                             ) ;
+    }                                                                        ;
+  }                                                                          ;
+  ////////////////////////////////////////////////////////////////////////////
+  return f                                                                   ;
 }
-
-QFileInfoList QtTarBall::Listing(QDir & root,QDir source)
-{
-  return source . entryInfoList ( QDir::NoDotAndDotDot | QDir::AllEntries ) ;
+//////////////////////////////////////////////////////////////////////////////
+QFileInfoList QtTarBall::Listing ( QDir & root , QDir source               ) {
+  return source . entryInfoList  ( QDir::NoDotAndDotDot | QDir::AllEntries ) ;
 }
-
-bool QtTarBall::ToHiddenFileInfo(QDir & root,QFileInfo & file,void * hiddenFileInfo)
-{
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::ToHiddenFileInfo ( QDir      & root                          ,
+                                   QFileInfo & file                          ,
+                                   void      * hiddenFileInfo              ) {
+  ////////////////////////////////////////////////////////////////////////////
   HiddenFileInfo   * hfi = (HiddenFileInfo *) hiddenFileInfo                 ;
   QFile::Permissions mode                                                    ;
+  ////////////////////////////////////////////////////////////////////////////
   hfi -> Archive  = true                                                     ;
   hfi -> uid      = file . ownerId       ( )                                 ;
   hfi -> uname    = file . owner         ( )                                 ;
   hfi -> gid      = file . groupId       ( )                                 ;
   hfi -> gname    = file . group         ( )                                 ;
   hfi -> LinkName = file . symLinkTarget ( )                                 ;
-  hfi -> Time     = file . created       ( )                                 ;
+  hfi -> Time     = file . birthTime     ( )                                 ;
   hfi -> Lastest  = file . lastModified  ( )                                 ;
   hfi -> Prefix   = ""                                                       ;
   hfi -> CheckSum = "       "                                                ;
@@ -453,77 +495,93 @@ bool QtTarBall::ToHiddenFileInfo(QDir & root,QFileInfo & file,void * hiddenFileI
   }                                                                          ;
   return true                                                                ;
 }
-
-bool QtTarBall::WriteFile(QIODevice & IO,QFileInfo & file)
-{
-  QFile F ( file . absoluteFilePath ( ) )                       ;
-  if ( ! F . open ( QIODevice::ReadOnly )        ) return false ;
-  QByteArray H                                                  ;
-  int        bs = BlockSize ( )                                 ;
-  do                                                            {
-    H = F . read ( bs )                                         ;
-    if ( H . size ( ) == bs )                                   {
-      if ( ! Write ( IO , H ) ) return false                    ;
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::WriteFile ( QIODevice & IO , QFileInfo & file )              {
+  ////////////////////////////////////////////////////////////////////////////
+  QFile F ( file . absoluteFilePath ( ) )                                    ;
+  if ( ! F . open ( QIODevice::ReadOnly )        ) return false              ;
+  QByteArray H                                                               ;
+  int        bs = BlockSize ( )                                              ;
+  ////////////////////////////////////////////////////////////////////////////
+  do                                                                         {
+    if ( ! Interval ( ) ) return false                                       ;
+    H = F . read ( bs )                                                      ;
+    if ( H . size ( ) == bs )                                                {
+      if ( ! Write ( IO , H ) ) return false                                 ;
     } else
-    if ( ( H . size ( ) > 0 ) && ( H . size ( ) < bs ) )        {
-      QByteArray B = H                                          ;
-      QByteArray E ( bs - H . size ( ) , 0 )                    ;
-      B . append ( E )                                          ;
-      if ( ! Write ( IO , B ) ) return false                    ;
-    }                                                           ;
-  } while ( H . size ( ) == bs )                                ;
-  F . close ( )                                                 ;
-  return true                                                   ;
+    if ( ( H . size ( ) > 0 ) && ( H . size ( ) < bs ) )                     {
+      QByteArray B = H                                                       ;
+      QByteArray E ( bs - H . size ( ) , 0 )                                 ;
+      B . append ( E )                                                       ;
+      if ( ! Write ( IO , B ) ) return false                                 ;
+    }                                                                        ;
+  } while ( H . size ( ) == bs )                                             ;
+  ////////////////////////////////////////////////////////////////////////////
+  F . close ( )                                                              ;
+  ////////////////////////////////////////////////////////////////////////////
+  return true                                                                ;
 }
-
-bool QtTarBall::WriteTAR(QIODevice & IO,QDir & root,QFileInfo & file)
-{
-  HiddenFileInfo * HFI                            ;
-  HFI = (HiddenFileInfo *) NewHiddenFile ( )      ;
-  if ( ! ToHiddenFileInfo ( root , file , HFI ) ) {
-    CleanHiddenFile ( HFI )                       ;
-    return false                                  ;
-  }                                               ;
-  QByteArray H                                    ;
-  int        bs = BlockSize ( )                   ;
-  if ( ! Bale ( HFI , H ) )                       {
-    CleanHiddenFile ( HFI )                       ;
-    return false                                  ;
-  }                                               ;
-  CleanHiddenFile ( HFI )                         ;
-  if ( H . size ( ) != bs          ) return false ;
-  if ( ! Write ( IO , H )          ) return false ;
-  if ( ! file . isFile ( )         ) return true  ;
-  return WriteFile ( IO , file )                  ;
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::WriteTAR ( QIODevice & IO , QDir & root , QFileInfo & file ) {
+  HiddenFileInfo * HFI                                                       ;
+  HFI = (HiddenFileInfo *) NewHiddenFile ( )                                 ;
+  if ( ! ToHiddenFileInfo ( root , file , HFI ) )                            {
+    CleanHiddenFile ( HFI )                                                  ;
+    return false                                                             ;
+  }                                                                          ;
+  QByteArray H                                                               ;
+  int        bs = BlockSize ( )                                              ;
+  if ( ! Bale ( HFI , H ) )                                                  {
+    CleanHiddenFile ( HFI )                                                  ;
+    return false                                                             ;
+  }                                                                          ;
+  CleanHiddenFile ( HFI )                                                    ;
+  if ( H . size ( ) != bs          ) return false                            ;
+  if ( ! Write ( IO , H )          ) return false                            ;
+  if ( ! file . isFile ( )         ) return true                             ;
+  return WriteFile ( IO , file )                                             ;
 }
-
-bool QtTarBall::TarBall(QString filename,QDir root,QDir source,bool recursive)
-{
-  QFile F ( filename )                                ;
-  bool  f = false                                     ;
-  if ( ! F . open ( QIODevice::WriteOnly ) ) return f ;
-  f = TarBall ( F, root , source , recursive )        ;
-  WriteClose  ( F                            )        ;
-  F . close   (                              )        ;
-  return f                                            ;
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::TarBall ( QString filename                                   ,
+                          QDir    root                                       ,
+                          QDir    source                                     ,
+                          bool    recursive                                ) {
+  ////////////////////////////////////////////////////////////////////////////
+  QFile F ( filename )                                                       ;
+  bool  f = false                                                            ;
+  ////////////////////////////////////////////////////////////////////////////
+  if ( ! F . open ( QIODevice::WriteOnly ) ) return f                        ;
+  ////////////////////////////////////////////////////////////////////////////
+  f = TarBall ( F, root , source , recursive )                               ;
+  WriteClose  ( F                            )                               ;
+  F . close   (                              )                               ;
+  ////////////////////////////////////////////////////////////////////////////
+  return f                                                                   ;
 }
-
-bool QtTarBall::TarBall(QIODevice & IO,QDir root,QDir source,bool recursive)
-{
-  QFileInfoList F = Listing ( root , source )                            ;
-  if ( F . count ( ) <= 0 ) return false                                 ;
-  for (int i = 0 ; i < F . count ( ) ; i++ )                             {
-    if ( ! WriteTAR ( IO , root , F [ i ] ) ) return false               ;
-    if ( ! Interval ( )                     ) return false               ;
-  }                                                                      ;
-  if ( ! recursive ) return true                                         ;
-  for (int i = 0 ; i < F . count ( ) ; i++ )                             {
-    if ( F [ i ] . isDir ( ) )                                           {
-      TarBall ( IO , root , F [ i ] . absoluteFilePath ( ) , recursive ) ;
-      if ( ! Interval ( )                   ) return false               ;
-    }                                                                    ;
-  }                                                                      ;
-  return true                                                            ;
+//////////////////////////////////////////////////////////////////////////////
+bool QtTarBall::TarBall ( QIODevice & IO                                     ,
+                          QDir        root                                   ,
+                          QDir        source                                 ,
+                          bool        recursive                            ) {
+  ////////////////////////////////////////////////////////////////////////////
+  QFileInfoList F = Listing ( root , source )                                ;
+  ////////////////////////////////////////////////////////////////////////////
+  if ( F . count ( ) <= 0 ) return false                                     ;
+  for (int i = 0 ; i < F . count ( ) ; i++ )                                 {
+    if ( ! WriteTAR ( IO , root , F [ i ] ) ) return false                   ;
+    if ( ! Interval ( )                     ) return false                   ;
+  }                                                                          ;
+  ////////////////////////////////////////////////////////////////////////////
+  if ( ! recursive ) return true                                             ;
+  for (int i = 0 ; i < F . count ( ) ; i++ )                                 {
+    if ( F [ i ] . isDir ( ) )                                               {
+      TarBall ( IO , root , F [ i ] . absoluteFilePath ( ) , recursive )     ;
+      if ( ! Interval ( )                   ) return false                   ;
+    }                                                                        ;
+  }                                                                          ;
+  ////////////////////////////////////////////////////////////////////////////
+  return true                                                                ;
 }
-
+//////////////////////////////////////////////////////////////////////////////
 QT_END_NAMESPACE
+//////////////////////////////////////////////////////////////////////////////
