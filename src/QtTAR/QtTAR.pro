@@ -9,14 +9,8 @@ load(qt_module)
 
 DEFINES     += ENABLE_HIDDEN_FILE_INFO_STRUCTURE
 
-INCLUDEPATH += $${PWD}/../../include/QtTAR
-
-HEADERS     += $${PWD}/../../include/QtTAR/QtTAR
-HEADERS     += $${PWD}/../../include/QtTAR/qttar.h
+INCLUDEPATH += $${PWD}
+HEADERS     += $${PWD}/qttar.h
 
 SOURCES     += $${PWD}/qttar.cpp
 SOURCES     += $${PWD}/tarball.cpp
-
-OTHER_FILES += $${PWD}/../../include/$${NAME}/headers.pri
-
-include ($${PWD}/../../doc/Qt/Qt.pri)

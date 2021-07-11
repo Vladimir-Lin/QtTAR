@@ -1,4 +1,4 @@
-set MODNAME=QtUUID
+set MODNAME=QtTAR
 nmake distclean
 rd  /s /q lib
 rd  /s /q mkspecs
